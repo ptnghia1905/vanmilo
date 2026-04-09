@@ -1,0 +1,464 @@
+[
+  {
+    "id": 1,
+    "name": "EMAX",
+    "price": 5000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 2,
+    "name": "Pharphap Brain (Hộp 30 viên)-BIO",
+    "price": 10000,
+    "quantity": 5,
+    "category": "supplement"
+  },
+  {
+    "id": 3,
+    "name": "ANNIBIO",
+    "price": 5000,
+    "quantity": 1,
+    "category": "supplement"
+  },
+  {
+    "id": 4,
+    "name": "FLEX GÓI",
+    "price": 20000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 5,
+    "name": "ZN BA LAN",
+    "price": 5000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 6,
+    "name": "Pharphap Gold H/30V",
+    "price": 10000,
+    "quantity": 6,
+    "category": "supplement"
+  },
+  {
+    "id": 7,
+    "name": "Pharphap Iron (Hộp 16 gói x 10 ml)-BIO",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 8,
+    "name": "PHARPHAP KIDS H/20g",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 9,
+    "name": "PHARPHAP Liver H/30V",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 10,
+    "name": "Pharphap Muhcough (Hộp x 1 chai 100ml)-SAKO",
+    "price": 5000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 11,
+    "name": "PHARPHAP SÂM NƯỚC ĐÔNG TRÙNG (Hộp 20 gói)-BIO",
+    "price": 20000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 12,
+    "name": "Pharphap Strong H/30V",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 13,
+    "name": "Eye alex ( mắt)",
+    "price": 5000,
+    "quantity": 7,
+    "category": "personalcare"
+  },
+  {
+    "id": 14,
+    "name": "Smoothi D-K2 15ml - Italy",
+    "price": 5000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 15,
+    "name": "Thực phẩm bảo vệ sức khỏe MAS MULTIGLUCAN - Vinapharma",
+    "price": 5000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 16,
+    "name": "Multivit Pregna H/30V - Activlab Ba Lan",
+    "price": 20000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 17,
+    "name": "MUMMACAL-ZT",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 18,
+    "name": "CLEGROWN",
+    "price": 10000,
+    "quantity": 6,
+    "category": "supplement"
+  },
+  {
+    "id": 19,
+    "name": "TPBVSK Điều kinh dưỡng- Ăn ngủ ngon WITRANCE - Hộp x 1 lọ x 30 viên",
+    "price": 5000,
+    "quantity": 1,
+    "category": "supplement"
+  },
+  {
+    "id": 20,
+    "name": "TPBVSK ALEXMIN PLUS (Hộp x 1 lọ x 30 viên)",
+    "price": 10000,
+    "quantity": 3,
+    "category": "supplement"
+  },
+  {
+    "id": 21,
+    "name": "TPBVSK Canxi MK7 Nhất long - Hộp x 1 lọ x 40 viên",
+    "price": 5000,
+    "quantity": 6,
+    "category": "vitamin"
+  },
+  {
+    "id": 22,
+    "name": "TPBVSK CANXI NANO KIDS MAX - Hộp x 4 vỉ x 5 ống",
+    "price": 5000,
+    "quantity": 2,
+    "category": "vitamin"
+  },
+  {
+    "id": 23,
+    "name": "TPBVSK NGỌC DÃ KHANG - Hộp x 20 gói x 10 ml",
+    "price": 500,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 24,
+    "name": "Viên bổ ăn ngủ ngon Pharphap BIO",
+    "price": 20000,
+    "quantity": 2,
+    "category": "supplement"
+  },
+  {
+    "id": 25,
+    "name": "BIOZINC KIDS C/150ml",
+    "price": 10000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 26,
+    "name": "CalciumDHA K2 Calbier JP H/20 ống",
+    "price": 10000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 27,
+    "name": "Smartbibi ZINC",
+    "price": 5000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 28,
+    "name": "DUNG DỊCH VỆ SINH HẰM HƯƠNG DAILY (Hộp x chai 150ml)",
+    "price": 5000,
+    "quantity": 0,
+    "category": "personalcare"
+  },
+  {
+    "id": 29,
+    "name": "Dung dịch vệ sinh mũi JPNatural Nano Baby/B001",
+    "price": 5000,
+    "quantity": 2,
+    "category": "personalcare"
+  },
+  {
+    "id": 30,
+    "name": "BECA-KID",
+    "price": 5000,
+    "quantity": 9,
+    "category": "supplement"
+  },
+  {
+    "id": 31,
+    "name": "Dung dịch vệ sinh mũi JPNatural Nano Spray for Adults",
+    "price": 5000,
+    "quantity": 0,
+    "category": "personalcare"
+  },
+  {
+    "id": 32,
+    "name": "Dung dịch vệ sinh phụ nữ Sidanatural (Hộp x chai x 150 ml)-BIO",
+    "price": 5000,
+    "quantity": 0,
+    "category": "personalcare"
+  },
+  {
+    "id": 33,
+    "name": "Dung dịch xịt họng JPNatural-SAKO",
+    "price": 5000,
+    "quantity": 0,
+    "category": "personalcare"
+  },
+  {
+    "id": 34,
+    "name": "Essepatil Extra H/60V - Activlab Balan",
+    "price": 20000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 35,
+    "name": "Kreo Activ Plus H/50V - Activlab Ba Lan",
+    "price": 30000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 36,
+    "name": "H12Pro Men ( sinh lý)",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 37,
+    "name": "Multivit For Men H/30V - Activlab Balan",
+    "price": 20000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 38,
+    "name": "Nước súc miệng Pharphap Proline (Chai 250ml)-BIO",
+    "price": 5000,
+    "quantity": 0,
+    "category": "personalcare"
+  },
+  {
+    "id": 39,
+    "name": "K2D3 BALAN",
+    "price": 20000,
+    "quantity": 2,
+    "category": "vitamin"
+  },
+  {
+    "id": 40,
+    "name": "LIVER COLIC",
+    "price": 5000,
+    "quantity": 1,
+    "category": "supplement"
+  },
+  {
+    "id": 41,
+    "name": "wHITEVER",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 42,
+    "name": "JONTSTAR",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 43,
+    "name": "RED E",
+    "price": 10000,
+    "quantity": 1,
+    "category": "vitamin"
+  },
+  {
+    "id": 44,
+    "name": "sinue",
+    "price": 30000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 45,
+    "name": "OKIWATA",
+    "price": 20000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 46,
+    "name": "omega 3 balan",
+    "price": 20000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 47,
+    "name": "mumfolate",
+    "price": 10000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 48,
+    "name": "Vệ sinh Lady",
+    "price": 5000,
+    "quantity": 0,
+    "category": "personalcare"
+  },
+  {
+    "id": 49,
+    "name": "Sâm nước JP lẻ",
+    "price": 1000,
+    "quantity": 10,
+    "category": "supplement"
+  },
+  {
+    "id": 50,
+    "name": "FERIPRO",
+    "price": 5000,
+    "quantity": 1,
+    "category": "supplement"
+  },
+  {
+    "id": 51,
+    "name": "VITALIN C",
+    "price": 10000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 52,
+    "name": "liverich",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 53,
+    "name": "Orange Care Iron Chelate",
+    "price": 10000,
+    "quantity": 5,
+    "category": "supplement"
+  },
+  {
+    "id": 54,
+    "name": "LUTEIN",
+    "price": 20000,
+    "quantity": 2,
+    "category": "vitamin"
+  },
+  {
+    "id": 55,
+    "name": "PHARPHAP BRAIN VỈ",
+    "price": 3300,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 56,
+    "name": "PHARPHAP LIVER VỈ",
+    "price": 3300,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 57,
+    "name": "Kreo Activ Plus H/50V - Activlab Ba Lan vỉ",
+    "price": 6000,
+    "quantity": 1,
+    "category": "supplement"
+  },
+  {
+    "id": 58,
+    "name": "DIAMON CarE",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 59,
+    "name": "Ngọc Dạ KHANG (hộp)",
+    "price": 10000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 60,
+    "name": "Pharphap entero Bio (ống)",
+    "price": 750,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 61,
+    "name": "biomaxfibill",
+    "price": 5000,
+    "quantity": 7,
+    "category": "supplement"
+  },
+  {
+    "id": 62,
+    "name": "ORAnge Care VITAMIN D3K2",
+    "price": 5000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 63,
+    "name": "BACOPA",
+    "price": 20000,
+    "quantity": 1,
+    "category": "supplement"
+  },
+  {
+    "id": 64,
+    "name": "Sinure vỉ",
+    "price": 6000,
+    "quantity": 0,
+    "category": "supplement"
+  },
+  {
+    "id": 65,
+    "name": "Lutein vỉ",
+    "price": 10000,
+    "quantity": 0,
+    "category": "vitamin"
+  },
+  {
+    "id": 66,
+    "name": "Aquamin",
+    "price": 15000,
+    "quantity": 0,
+    "category": "supplement"
+  }
+]

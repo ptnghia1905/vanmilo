@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanmilo - Quản Lý Sản Phẩm</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-boxes-stacked"></i>
+                    <h1>Vanmilo</h1>
+                </div>
+                <div class="header-actions">
+                    <span id="authGuest">
+                        <button type="button" class="btn btn-secondary" id="loginBtn">
+                            <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                        </button>
+                    </span>
+                    <span id="authUser" class="hidden">
+                        <span class="user-email" id="userEmail" title=""></span>
+                        <button type="button" class="btn btn-secondary" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                        <button type="button" class="btn btn-primary" id="addProductBtn">
+                            <i class="fas fa-plus"></i> Thêm Sản Phẩm
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon total">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-number" id="totalProducts">0</span>
+                    <span class="stat-label">Tổng Sản Phẩm</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon in-stock">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-number" id="inStockProducts">0</span>
+                    <span class="stat-label">Còn Hàng</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon total-revenue-alltime">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-number" id="allTimeRevenue">0</span>
+                    <span class="stat-label">Hoa Hồng Bán Được</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon today-revenue">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-number" id="todayRevenue">0</span>
+                    <span class="stat-label">Hoa Hồng Hôm Nay</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Revenue Section -->
+        <div class="daily-revenue-section" id="dailyRevenueSection">
+            <div class="section-header" id="dailyRevenueToggle">
+                <h3><i class="fas fa-calendar-alt"></i> Doanh Thu Theo Ngày</h3>
+                <i class="fas fa-chevron-down toggle-icon" id="dailyRevenueIcon"></i>
+            </div>
+            <div class="section-content" id="dailyRevenueContent">
+                <table class="daily-revenue-table">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Số đơn</th>
+                            <th>Tổng Doanh Thu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dailyRevenueBody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="toolbar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+            </div>
+            <div class="date-filter">
+                <i class="fas fa-calendar"></i>
+                <input type="date" id="dateFilter">
+            </div>
+            <div class="filter-group">
+                <select id="categoryFilter">
+                    <option value="">Tất cả loại</option>
+                    <option value="supplement">Thực Phẩm Chức Năng</option>
+                    <option value="vitamin">Vitamin</option>
+                    <option value="personalcare">Chăm Sóc Cá Nhân</option>
+                    <option value="other">Khác</option>
+                </select>
+                <select id="stockFilter">
+                    <option value="">Tất cả</option>
+                    <option value="in-stock">Còn Hàng</option>
+                    <option value="out-of-stock">Hết Hàng</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Product Table -->
+        <div class="table-container" id="tableContainer">
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th class="col-stt">STT</th>
+                        <th class="col-name">Tên Sản Phẩm</th>
+                        <th class="col-price">Đơn Giá</th>
+                        <th class="col-quantity">Số Lượng</th>
+                        <th class="col-total">Thành Tiền</th>
+                        <th class="col-actions">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    <!-- Products will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- Pagination will be generated here -->
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content modal-narrow">
+            <div class="modal-header">
+                <h2>Đăng nhập quản trị</h2>
+                <button type="button" class="close-btn" id="closeLoginModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <input type="password" id="loginPassword" autocomplete="current-password" required>
+                </div>
+                <p class="form-hint">Chỉ tài khoản đã thêm trong Firebase Authentication mới đăng nhập được.</p>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelLoginBtn">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Thêm Sản Phẩm Mới</h2>
+                <button class="close-btn" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label for="productName">Tên Sản Phẩm</label>
+                    <input type="text" id="productName" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productPrice">Đơn Giá (VNĐ)</label>
+                        <input type="number" id="productPrice" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="productQuantity">Số Lượng</label>
+                        <input type="number" id="productQuantity" required min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">Loại Sản Phẩm</label>
+                    <select id="productCategory">
+                        <option value="supplement">Thực Phẩm Chức Năng</option>
+                        <option value="vitamin">Vitamin</option>
+                        <option value="personalcare">Chăm Sóc Cá Nhân</option>
+                        <option value="other">Khác</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sell Product Modal -->
+    <div class="modal" id="sellModal">
+        <div class="modal-content modal-narrow sell-modal">
+            <div class="modal-header sell-modal-header">
+                <h2><i class="fas fa-cart-shopping"></i> Bán Sản Phẩm</h2>
+                <button type="button" class="close-btn" id="closeSellModal" aria-label="Đóng">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="sellForm">
+                <input type="hidden" id="sellProductId">
+                <div class="form-group sell-product-group">
+                    <label>Sản phẩm</label>
+                    <input type="text" id="sellProductName" class="sell-product-name" readonly tabindex="-1">
+                </div>
+                <div class="form-row sell-form-row">
+                    <div class="form-group">
+                        <label for="sellQuantity">Số lượng bán <span class="label-required">*</span></label>
+                        <input type="number" id="sellQuantity" required min="1" inputmode="numeric">
+                    </div>
+                    <div class="form-group">
+                        <label for="sellPrice">Đơn giá (VNĐ) <span class="label-required">*</span></label>
+                        <input type="number" id="sellPrice" required min="0" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="sell-total-card">
+                    <span class="sell-total-label">Thành tiền</span>
+                    <div id="sellTotal" class="sell-total-value">—</div>
+                </div>
+                <div class="form-actions sell-form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelSellBtn">Hủy</button>
+                    <button type="submit" class="btn btn-sell-confirm">
+                        <i class="fas fa-check"></i> Xác nhận bán
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Thành công!</span>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="js/firebase.js"></script>
+    <!-- App -->
+    <script src="js/app.js"></script>
+</body>
+</html>

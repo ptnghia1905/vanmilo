@@ -1,0 +1,24 @@
+{
+  "name": "vanmilo-product-manager",
+  "version": "1.0.0",
+  "description": "Product Management System - Vanmilo (Firebase)",
+  "main": "firebase.json",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "keywords": [
+    "product",
+    "management",
+    "firebase"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serve": "^14.2.0"
+  },
+  "dependencies": {
+    "firebase": "^12.11.0",
+    "firebase-admin": "^13.7.0"
+  }
+}
