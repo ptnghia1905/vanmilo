@@ -3,22 +3,23 @@
   "version": "1.0.0",
   "description": "Product Management System - Vanmilo (Firebase)",
   "main": "firebase.json",
+  "homepage": "https://ptnghia1905.github.io/vanmilo",
   "scripts": {
     "start": "npx serve .",
-    "dev": "npx serve ."
+    "dev": "npx serve .",
+    "deploy": "gh-pages -d public"
   },
   "keywords": [
     "product",
     "management",
     "firebase"
   ],
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "serve": "^14.2.0"
   },
   "dependencies": {
     "firebase": "^12.11.0",
-    "firebase-admin": "^13.7.0"
+    "gh-pages": "^6.3.0"
   }
 }
