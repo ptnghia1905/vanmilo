@@ -26,9 +26,38 @@ const sellQuantityEl = document.getElementById('sellQuantity');
 const sellPriceEl = document.getElementById('sellPrice');
 const sellTotalEl = document.getElementById('sellTotal');
 
+// Daily Sales Modal Elements
+const dailySalesModal = document.getElementById('dailySalesModal');
+const dailySalesTitle = document.getElementById('dailySalesTitle');
+const dailySalesTableBody = document.getElementById('dailySalesTableBody');
+const closeDailySalesModalBtn = document.getElementById('closeDailySalesModal');
+
+// Revenue Toggle Elements
+const toggleRevenueBtn = document.getElementById('toggleRevenue');
+const toggleTodayRevenueBtn = document.getElementById('toggleTodayRevenue');
+let isRevenueHidden = true;
+let isTodayRevenueHidden = true;
+const REVENUE_PASSWORD = '11';
+
+// Password Modal Elements
+const passwordModal = document.getElementById('passwordModal');
+const passwordInput = document.getElementById('passwordInput');
+const passwordError = document.getElementById('passwordError');
+const closePasswordModalBtn = document.getElementById('closePasswordModal');
+const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+const submitPasswordBtn = document.getElementById('submitPasswordBtn');
+const deleteModal = document.getElementById('deleteModal');
+const deleteProductNameEl = document.getElementById('deleteProductName');
+const closeDeleteModalBtn = document.getElementById('closeDeleteModal');
+const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+let pendingDeleteId = null;
+let pendingDeleteCallback = null;
+
 // DOM Elements
 const productTableBody = document.getElementById('productTableBody');
 const searchInput = document.getElementById('searchInput');
+const searchClear = document.getElementById('searchClear');
 const categoryFilter = document.getElementById('categoryFilter');
 const stockFilter = document.getElementById('stockFilter');
 const pagination = document.getElementById('pagination');
@@ -66,6 +95,8 @@ const loginModal = document.getElementById('loginModal');
 const loginForm = document.getElementById('loginForm');
 const closeLoginModalBtn = document.getElementById('closeLoginModal');
 const cancelLoginBtn = document.getElementById('cancelLoginBtn');
+const loginPasswordInput = document.getElementById('loginPassword');
+const toggleLoginPasswordBtn = document.getElementById('toggleLoginPassword');
 
 // Format Currency (VNĐ)
 function formatCurrency(amount) {
@@ -106,14 +137,24 @@ function updateAuthUI(user) {
     renderPagination();
 }
 
+function resetLoginPasswordVisibility() {
+    if (!loginPasswordInput || !toggleLoginPasswordBtn) return;
+    loginPasswordInput.type = 'password';
+    const icon = toggleLoginPasswordBtn.querySelector('i');
+    if (icon) icon.className = 'fas fa-eye';
+    toggleLoginPasswordBtn.setAttribute('aria-label', 'Hiện mật khẩu');
+}
+
 function openLoginModal() {
     loginModal.classList.add('active');
     loginForm.reset();
+    resetLoginPasswordVisibility();
 }
 
 function closeLoginModal() {
     loginModal.classList.remove('active');
     loginForm.reset();
+    resetLoginPasswordVisibility();
 }
 
 async function handleLoginSubmit(e) {
@@ -274,6 +315,17 @@ function updateStats() {
     totalProductsEl.textContent = products.length;
     allTimeRevenueEl.textContent = formatCurrency(commission);
     todayRevenueEl.textContent = formatCurrency(todayCommission);
+    
+    // Apply hidden state on load
+    if (isRevenueHidden) {
+        allTimeRevenueEl.classList.add('hidden');
+        toggleRevenueBtn.querySelector('i').className = 'fas fa-eye-slash';
+    }
+    if (isTodayRevenueHidden) {
+        todayRevenueEl.classList.add('hidden');
+        toggleTodayRevenueBtn.querySelector('i').className = 'fas fa-eye-slash';
+    }
+    
     renderDailyRevenue();
 }
 
@@ -333,6 +385,13 @@ function renderTable() {
 
         return `
             <tr data-id="${product.id}">
+                <td class="col-sell">
+                    ${isAuthenticated ? `
+                    <button class="action-btn sell" onclick="openSellModal(${product.id})" title="Bán">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                    ` : '-'}
+                </td>
                 <td class="col-stt">${stt}</td>
                 <td class="col-name">
                     <span class="product-name">${product.name}</span>
@@ -349,13 +408,10 @@ function renderTable() {
                 <td class="col-actions">
                     ${isAuthenticated ? `
                     <div class="action-buttons">
-                        <button class="action-btn sell" onclick="openSellModal(${product.id})" title="Bán">
-                            <i class="fas fa-shopping-cart"></i>
-                        </button>
                         <button class="action-btn edit" onclick="editProduct(${product.id})" title="Sửa">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="action-btn delete" onclick="handleDeleteProduct(${product.id})" title="Xóa">
+                        <button class="action-btn delete" onclick="openDeleteModal(${product.id})" title="Xóa">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -458,13 +514,55 @@ function editProduct(id) {
 // ========================================
 // Delete Product
 // ========================================
+function openDeleteModal(id) {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+    pendingDeleteId = id;
+    deleteProductNameEl.textContent = product.name;
+    deleteModal.classList.add('active');
+}
+
+function closeDeleteModal() {
+    deleteModal.classList.remove('active');
+    pendingDeleteId = null;
+    pendingDeleteCallback = null;
+}
+
 async function handleDeleteProduct(id) {
     if (!isAuthenticated) {
         showToast('Vui lòng đăng nhập để xóa sản phẩm.', true);
         return;
     }
-    if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
-    await deleteProductAPI(id);
+    openDeleteModal(id);
+}
+
+async function executeDelete() {
+    if (pendingDeleteCallback) {
+        const cb = pendingDeleteCallback;
+        closeDeleteModal();
+        await cb();
+        return;
+    }
+    if (!pendingDeleteId || !isAuthenticated) return;
+    const id = pendingDeleteId;
+    closeDeleteModal();
+    
+    try {
+        const snapshot = await db.collection(PRODUCTS_COLLECTION)
+            .where('id', '==', id)
+            .get();
+        
+        if (snapshot.empty) {
+            showToast('Không tìm thấy sản phẩm!', true);
+            return;
+        }
+        
+        await db.collection(PRODUCTS_COLLECTION).doc(snapshot.docs[0].id).delete();
+        showToast('Xóa sản phẩm thành công!');
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        showToast('Lỗi khi xóa sản phẩm!', true);
+    }
 }
 
 // ========================================
@@ -480,11 +578,11 @@ async function handleSaveProduct(e) {
     const productData = {
         name: document.getElementById('productName').value.trim(),
         price: parseInt(document.getElementById('productPrice').value),
-        quantity: parseInt(document.getElementById('productQuantity').value),
+        quantity: parseInt(document.getElementById('productQuantity').value) || 0,
         category: document.getElementById('productCategory').value
     };
 
-    if (!productData.name || isNaN(productData.price) || isNaN(productData.quantity)) {
+    if (!productData.name || isNaN(productData.price)) {
         showToast('Vui lòng điền đầy đủ thông tin!', true);
         return;
     }
@@ -599,12 +697,46 @@ sellForm.addEventListener('submit', handleSellSubmit);
 sellModal.addEventListener('click', (e) => {
     if (e.target === sellModal) closeSellModal();
 });
+
+// Daily Sales Modal Events
+closeDailySalesModalBtn.addEventListener('click', closeDailySalesModalFn);
+dailySalesModal.addEventListener('click', (e) => {
+    if (e.target === dailySalesModal) closeDailySalesModalFn();
+});
 sellQuantityEl.addEventListener('input', updateSellTotal);
 sellPriceEl.addEventListener('input', updateSellTotal);
+
+// Delete Modal Event Listeners
+closeDeleteModalBtn.addEventListener('click', closeDeleteModal);
+cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+confirmDeleteBtn.addEventListener('click', executeDelete);
+deleteModal.addEventListener('click', (e) => {
+    if (e.target === deleteModal) closeDeleteModal();
+});
+
+// Password Modal Event Listeners
+closePasswordModalBtn.addEventListener('click', closePasswordModal);
+cancelPasswordBtn.addEventListener('click', closePasswordModal);
+submitPasswordBtn.addEventListener('click', submitPassword);
+passwordModal.addEventListener('click', (e) => {
+    if (e.target === passwordModal) closePasswordModal();
+});
+passwordInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') submitPassword();
+});
 
 loginBtn.addEventListener('click', openLoginModal);
 logoutBtn.addEventListener('click', handleLogout);
 loginForm.addEventListener('submit', handleLoginSubmit);
+if (toggleLoginPasswordBtn && loginPasswordInput) {
+    toggleLoginPasswordBtn.addEventListener('click', () => {
+        const isPassword = loginPasswordInput.type === 'password';
+        loginPasswordInput.type = isPassword ? 'text' : 'password';
+        const icon = toggleLoginPasswordBtn.querySelector('i');
+        if (icon) icon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+        toggleLoginPasswordBtn.setAttribute('aria-label', isPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+    });
+}
 closeLoginModalBtn.addEventListener('click', closeLoginModal);
 cancelLoginBtn.addEventListener('click', closeLoginModal);
 loginModal.addEventListener('click', (e) => {
@@ -622,8 +754,88 @@ productModal.addEventListener('click', (e) => {
     }
 });
 
+// Password Modal Functions
+let pendingRevealTarget = null; // 'allTime' or 'today'
+
+function openPasswordModal(target) {
+    pendingRevealTarget = target;
+    console.log('openPasswordModal called, target:', target);
+    passwordModal.classList.add('active');
+    passwordInput.value = '';
+    passwordError.classList.add('hidden');
+    passwordInput.focus();
+}
+
+function closePasswordModal() {
+    console.log('closePasswordModal called');
+    passwordModal.classList.remove('active');
+    passwordInput.value = '';
+    passwordError.classList.add('hidden');
+    pendingRevealTarget = null;
+}
+
+function submitPassword() {
+    const inputValue = passwordInput.value.trim();
+    console.log('submitPassword called, inputValue:', inputValue, 'expected:', REVENUE_PASSWORD);
+    console.log('pendingRevealTarget before close:', pendingRevealTarget);
+    if (inputValue === REVENUE_PASSWORD) {
+        const target = pendingRevealTarget; // Lưu trước khi close modal
+        closePasswordModal();
+        console.log('Revealing target:', target);
+        if (target === 'allTime') {
+            isRevenueHidden = false;
+            allTimeRevenueEl.classList.remove('hidden');
+            toggleRevenueBtn.querySelector('i').className = 'fas fa-eye';
+        } else if (target === 'today') {
+            isTodayRevenueHidden = false;
+            todayRevenueEl.classList.remove('hidden');
+            toggleTodayRevenueBtn.querySelector('i').className = 'fas fa-eye';
+        }
+    } else {
+        console.log('Wrong password');
+        passwordError.classList.remove('hidden');
+        passwordInput.value = '';
+        passwordInput.focus();
+    }
+}
+
+// Revenue Toggle Functions
+function toggleRevenue() {
+    console.log('toggleRevenue called, isRevenueHidden:', isRevenueHidden);
+    if (!isRevenueHidden) {
+        isRevenueHidden = true;
+        allTimeRevenueEl.classList.add('hidden');
+        toggleRevenueBtn.querySelector('i').className = 'fas fa-eye-slash';
+    } else {
+        openPasswordModal('allTime');
+    }
+}
+
+function toggleTodayRevenue() {
+    console.log('toggleTodayRevenue called, isTodayRevenueHidden:', isTodayRevenueHidden);
+    if (!isTodayRevenueHidden) {
+        isTodayRevenueHidden = true;
+        todayRevenueEl.classList.add('hidden');
+        toggleTodayRevenueBtn.querySelector('i').className = 'fas fa-eye-slash';
+    } else {
+        openPasswordModal('today');
+    }
+}
+
+toggleRevenueBtn.addEventListener('click', toggleRevenue);
+toggleTodayRevenueBtn.addEventListener('click', toggleTodayRevenue);
+
 // Search and Filter
-searchInput.addEventListener('input', debounce(applyFilters, 300));
+searchInput.addEventListener('input', debounce(() => {
+    applyFilters();
+    searchClear.classList.toggle('hidden', !searchInput.value);
+}, 300));
+searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchClear.classList.add('hidden');
+    applyFilters();
+    searchInput.focus();
+});
 categoryFilter.addEventListener('change', applyFilters);
 stockFilter.addEventListener('change', applyFilters);
 
@@ -644,6 +856,14 @@ function debounce(func, wait) {
 // Initialize App
 // ========================================
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded - searchInput.value:', searchInput.value);
+    console.log('DOMContentLoaded - loginEmail:', localStorage.getItem('loginEmail'));
+    
+    // Check again after browser autofill
+    setTimeout(() => {
+        console.log('After 1s - searchInput.value:', searchInput.value);
+    }, 1000);
+    
     auth.onAuthStateChanged((user) => {
         updateAuthUI(user);
     });
@@ -656,6 +876,10 @@ window.editProduct = editProduct;
 window.handleDeleteProduct = handleDeleteProduct;
 window.changePage = changePage;
 window.openSellModal = openSellModal;
+window.openDeleteModal = openDeleteModal;
+window.openDailySalesModal = openDailySalesModal;
+window.closeDailySalesModalFn = closeDailySalesModalFn;
+window.deleteSale = deleteSale;
 
 // Event: Date Filter
 dateFilterEl.addEventListener('change', () => {
@@ -701,10 +925,11 @@ function renderDailyRevenue() {
         if (!sale.soldAt) return;
         const dateStr = sale.soldAt.split('T')[0]; // YYYY-MM-DD
         if (!dailyMap[dateStr]) {
-            dailyMap[dateStr] = { total: 0, count: 0 };
+            dailyMap[dateStr] = { total: 0, count: 0, sales: [] };
         }
         dailyMap[dateStr].total += sale.totalAmount || 0;
         dailyMap[dateStr].count += 1;
+        dailyMap[dateStr].sales.push(sale);
     });
 
     // Sort by date descending (newest first)
@@ -732,7 +957,7 @@ function renderDailyRevenue() {
             year: 'numeric'
         });
         return `
-            <tr>
+            <tr onclick="openDailySalesModal('${dateStr}')" style="cursor:pointer;">
                 <td><strong>${formattedDate}</strong></td>
                 <td style="text-align:center;">${data.count} đơn</td>
                 <td style="text-align:right; color: var(--success-color); font-weight: 600;">
@@ -741,6 +966,78 @@ function renderDailyRevenue() {
             </tr>
         `;
     }).join('');
+}
+
+// Open Daily Sales Detail Modal
+function openDailySalesModal(dateStr) {
+    const dateObj = new Date(dateStr + 'T00:00:00');
+    const formattedDate = dateObj.toLocaleDateString('vi-VN', {
+        weekday: 'long',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+    dailySalesTitle.innerHTML = `<i class="fas fa-calendar-day"></i> Chi tiết doanh thu ngày ${formattedDate}`;
+    dailySalesTitle.dataset.dateStr = dateStr;
+    
+    // Filter sales for this date
+    const daySales = salesData.filter(sale => {
+        if (!sale.soldAt) return false;
+        return sale.soldAt.split('T')[0] === dateStr;
+    }).sort((a, b) => new Date(b.soldAt) - new Date(a.soldAt));
+
+    if (daySales.length === 0) {
+        dailySalesTableBody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align:center; color: var(--gray-400); padding: 20px;">
+                    Không có dữ liệu
+                </td>
+            </tr>
+        `;
+    } else {
+        dailySalesTableBody.innerHTML = daySales.map((sale, index) => {
+            const saleDate = new Date(sale.soldAt);
+            const timeStr = saleDate.toLocaleTimeString('vi-VN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            return `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${sale.productName || 'Sản phẩm đã xóa'}</strong></td>
+                    <td style="text-align:center;">${sale.quantitySold || 0}</td>
+                    <td>${formatCurrency(sale.pricePerUnit || 0)}</td>
+                    <td style="color: var(--success-color); font-weight: 600;">${formatCurrency(sale.totalAmount || 0)}</td>
+                    <td>${timeStr}</td>
+                    <td><button onclick="deleteSale('${sale.id}')" class="btn-delete-sale" title="Xóa đơn này"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    dailySalesModal.classList.add('active');
+}
+
+// Close Daily Sales Modal
+function closeDailySalesModalFn() {
+    dailySalesModal.classList.remove('active');
+}
+
+// Delete a sale entry
+function deleteSale(saleId) {
+    deleteProductNameEl.textContent = 'đơn hàng này';
+    pendingDeleteCallback = async () => {
+        try {
+            await db.collection(SALES_COLLECTION).doc(saleId).delete();
+            showToast('Đã xóa đơn hàng!');
+            const dateStr = dailySalesTitle.dataset.dateStr;
+            if (dateStr) openDailySalesModal(dateStr);
+        } catch (error) {
+            console.error('Error deleting sale:', error);
+            showToast('Xóa thất bại!', true);
+        }
+    };
+    deleteModal.classList.add('active');
 }
 
 // Export functions for global access

@@ -37,12 +37,18 @@
     box-sizing: border-box;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     color: var(--gray-700);
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 .container {
@@ -318,6 +324,7 @@ body {
 .daily-revenue-table tbody tr {
     border-bottom: 1px solid var(--gray-100);
     transition: var(--transition);
+    cursor: pointer;
 }
 
 .daily-revenue-table tbody tr:hover {
@@ -362,15 +369,17 @@ body {
 
 .search-box i {
     position: absolute;
-    left: 16px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--gray-400);
+    pointer-events: none;
+    font-size: 14px;
 }
 
 .search-box input {
     width: 100%;
-    padding: 12px 16px 12px 44px;
+    padding: 12px 40px 12px 44px;
     border: 2px solid var(--gray-200);
     border-radius: var(--radius);
     font-size: 14px;
@@ -380,6 +389,45 @@ body {
 .search-box input:focus {
     outline: none;
     border-color: var(--primary-color);
+}
+
+.search-clear {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: var(--gray-300);
+    color: var(--gray-600);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    line-height: 1;
+    transition: var(--transition);
+    padding: 0;
+}
+
+.search-clear i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+}
+
+.search-clear:hover {
+    background: var(--gray-400);
+    color: white;
+}
+
+.search-clear.hidden {
+    display: none;
 }
 
 .filter-group {
@@ -466,7 +514,8 @@ body {
     font-size: 14px;
 }
 
-.col-stt { width: 60px; text-align: center; }
+.col-sell { width: 60px; text-align: center; }
+.col-stt { width: 50px; text-align: center; }
 .col-name { min-width: 200px; }
 .col-price { width: 150px; text-align: right; }
 .col-quantity { width: 120px; text-align: center; }
@@ -613,8 +662,13 @@ body {
     display: none;
     align-items: center;
     justify-content: center;
+    padding: 20px;
     z-index: 1000;
     backdrop-filter: blur(4px);
+}
+
+#deleteModal {
+    z-index: 1100;
 }
 
 .modal.active {
@@ -672,6 +726,15 @@ body {
 .close-btn:hover {
     background: var(--gray-200);
     color: var(--gray-800);
+}
+
+@media (max-width: 768px) {
+    .close-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+        touch-action: manipulation;
+    }
 }
 
 #productForm {
@@ -750,55 +813,364 @@ body {
         padding: 12px;
     }
 
+    .header {
+        padding: 16px 20px;
+        border-radius: var(--radius);
+    }
+
     .header-content {
         flex-direction: column;
-        gap: 16px;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .logo {
+        justify-content: center;
+    }
+
+    .header-actions {
+        justify-content: center;
+        flex-direction: row;
     }
 
     .stats-container {
         grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-number {
+        font-size: 22px;
+    }
+
+    .stat-label {
+        font-size: 12px;
     }
 
     .toolbar {
         flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-group {
+        width: 100%;
+    }
+
+    .search-group input {
+        min-width: 0;
     }
 
     .filter-group {
         width: 100%;
+        flex-wrap: wrap;
     }
 
     .filter-group select {
         flex: 1;
+        min-width: 120px;
     }
 
     .table-container {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .product-table {
-        min-width: 700px;
+        min-width: 680px;
+        font-size: 13px;
+    }
+
+    .product-table th,
+    .product-table td {
+        padding: 10px 8px;
+        white-space: nowrap;
+    }
+
+    .btn {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 11px;
     }
 
     .form-row {
         grid-template-columns: 1fr;
     }
 
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
     .pagination {
         flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .pagination button {
+        min-width: 36px;
+        min-height: 36px;
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-width: 100%;
+        border-radius: var(--radius-lg);
+    }
+
+    .modal-header {
+        padding: 18px 20px;
+    }
+
+    .modal-header h2 {
+        font-size: 17px;
+    }
+
+    #productForm,
+    #sellForm {
+        padding: 18px 20px;
+    }
+
+    .sell-total-value {
+        font-size: 22px;
+    }
+
+    .toast {
+        left: 12px;
+        right: 12px;
+        bottom: 16px;
+        font-size: 13px;
     }
 }
 
 @media (max-width: 480px) {
+    .container {
+        padding: 8px;
+    }
+
+    .header {
+        padding: 14px 16px;
+        margin-bottom: 16px;
+    }
+
+    .logo i {
+        font-size: 24px;
+    }
+
+    .logo h1 {
+        font-size: 20px;
+    }
+
+    .user-email {
+        display: none;
+    }
+
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 14px 12px;
+    }
+
+    .stat-number {
+        font-size: 20px;
+    }
+
+    .stat-icon i {
+        font-size: 20px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .stat-toggle-btn,
+    .toggle-visibility {
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    .toolbar {
+        gap: 10px;
+    }
+
+    .search-group input,
+    .filter-group select {
+        font-size: 13px;
+        padding: 9px 12px;
+    }
+
+    .product-table {
+        min-width: 600px;
+        font-size: 12px;
+    }
+
+    .product-table th,
+    .product-table td {
+        padding: 8px 6px;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+
+    .btn-sm {
+        padding: 5px 8px;
+        font-size: 10px;
+    }
+
+    .pagination button {
+        min-width: 36px;
+        min-height: 36px;
+        padding: 8px;
+    }
+
+    .daily-revenue-table th,
+    .daily-revenue-table td {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+
+    .login-modal-header h2 {
+        font-size: 16px;
+    }
+
+    .login-modal-header h2 > i {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .login-hint p {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .daily-revenue-table th,
+    .daily-revenue-table td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .daily-revenue-table th {
+        font-size: 11px;
+    }
+
+    .login-modal-header {
+        padding: 16px 18px;
+    }
+
+    .login-modal-header h2 {
+        font-size: 17px;
+    }
+
+    .login-modal-header h2 > i {
+        width: 38px;
+        height: 38px;
+        font-size: 17px;
+    }
+
+    #loginForm {
+        padding: 18px 20px 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .daily-revenue-table th,
+    .daily-revenue-table td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    
+    .sales-detail-table th,
+    .sales-detail-table td {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+    
+    .sales-detail-table th:nth-child(4),
+    .sales-detail-table td:nth-child(4) {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-wide {
+        width: 92%;
+        max-width: 100%;
+        max-height: 85vh;
+        margin-top: auto;
+        margin-bottom: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .modal-wide .modal-body {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .sales-detail-table {
+        font-size: 13px;
+    }
+    
+    .sales-detail-table th,
+    .sales-detail-table td {
+        padding: 10px 8px;
+    }
+    
+    .modal {
+        align-items: center;
+        padding: 10px;
+    }
+    
+    .modal-content {
+        max-height: 90vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    #productForm,
+    #sellForm {
+        overflow-y: auto;
+        flex: 1;
+    }
+}
+
+@media (max-width: 360px) {
     .stats-container {
         grid-template-columns: 1fr;
     }
 
     .logo h1 {
-        font-size: 22px;
+        font-size: 18px;
     }
 
-    .stat-number {
-        font-size: 24px;
+    .product-table {
+        min-width: 520px;
     }
 }
 
@@ -826,6 +1198,182 @@ body {
 
 .modal-narrow {
     max-width: 420px;
+}
+
+.modal-wide {
+    max-width: 800px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-wide .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Sales Detail Table */
+.sales-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sales-detail-table th,
+.sales-detail-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sales-detail-table th {
+    background: var(--bg-secondary);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--gray-600);
+}
+
+.sales-detail-table td {
+    font-size: 14px;
+}
+
+.sales-detail-table tr:last-child td {
+    border-bottom: none;
+}
+
+.btn-delete-sale {
+    background: none;
+    border: none;
+    color: var(--gray-400);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.btn-delete-sale:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Login modal */
+.login-modal {
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-lg), 0 0 0 1px rgb(255 255 255 / 0.06) inset;
+}
+
+.login-modal-header {
+    background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 50%, white 100%);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 20px 22px;
+}
+
+.login-modal-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin: 0;
+}
+
+.login-modal-header h2 > i {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+#loginForm {
+    padding: 24px 24px 26px;
+}
+
+.login-field.form-group {
+    margin-bottom: 18px;
+}
+
+/* Giống modal bán: input thẳng, không icon trong ô; chỉ bọc ô mật khẩu để nút mắt */
+.login-password-wrap {
+    position: relative;
+}
+
+#loginForm .login-password-wrap input {
+    padding-right: 44px;
+    box-sizing: border-box;
+}
+
+.login-toggle-password {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--gray-500);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.login-toggle-password:hover {
+    background: var(--gray-100);
+    color: var(--gray-700);
+}
+
+.login-hint {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    margin: 4px 0 0;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid var(--gray-200);
+}
+
+.login-hint > i {
+    color: var(--primary-color);
+    font-size: 18px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.login-hint p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--gray-600);
+}
+
+.login-form-actions {
+    margin-top: 22px;
+    padding-top: 4px;
+}
+
+.btn-login-submit {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+    box-shadow: 0 2px 10px rgb(79 70 229 / 0.35);
+}
+
+.btn-login-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgb(79 70 229 / 0.45);
 }
 
 /* Sell modal */
@@ -949,6 +1497,182 @@ body {
     display: none;
 }
 
-.guest-actions-hint {
+/* Toggle Revenue Visibility */
+.toggle-visibility {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: var(--radius);
     color: var(--gray-400);
+    transition: all 0.2s ease;
+    margin-left: auto;
+}
+
+.toggle-visibility:hover {
+    color: var(--gray-600);
+    background: var(--gray-100);
+}
+
+.toggle-visibility i.hidden {
+    display: none;
+}
+
+.stat-number.hidden {
+    letter-spacing: 4px;
+    color: var(--gray-300);
+}
+
+/* Delete Modal */
+.delete-modal {
+    max-width: 400px;
+}
+
+.delete-modal-header {
+    background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 50%, white 100%);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 20px 22px;
+}
+
+.delete-modal-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #dc2626;
+}
+
+.delete-modal-header h2 i {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+    font-size: 18px;
+}
+
+.delete-modal .modal-body {
+    padding: 24px;
+    text-align: center;
+}
+
+.delete-modal .modal-body p {
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: var(--gray-700);
+}
+
+.delete-modal .modal-body p strong {
+    color: var(--gray-900);
+}
+
+.delete-warning {
+    color: var(--gray-500) !important;
+    font-size: 13px !important;
+}
+
+.delete-modal .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #b91c1c, #dc2626);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* Password Modal */
+.password-modal {
+    max-width: 380px;
+}
+
+.password-modal-header {
+    background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 50%, white 100%);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 20px 22px;
+}
+
+.password-modal-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #d97706;
+}
+
+.password-modal-header h2 i {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: white;
+    font-size: 18px;
+}
+
+.password-modal .modal-body {
+    padding: 24px;
+    text-align: center;
+}
+
+.password-modal .modal-body p {
+    margin: 0 0 16px;
+    font-size: 15px;
+    color: var(--gray-600);
+}
+
+.password-modal #passwordInput {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius);
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: 4px;
+    transition: border-color 0.2s ease;
+}
+
+.password-modal #passwordInput:focus {
+    outline: none;
+    border-color: #d97706;
+}
+
+.password-error {
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 10px !important;
+}
+
+.password-modal .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
 }

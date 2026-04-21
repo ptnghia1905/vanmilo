@@ -2,7 +2,10 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Vanmilo - Quản Lý Sản Phẩm</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -68,6 +71,9 @@
                     <span class="stat-number" id="allTimeRevenue">0</span>
                     <span class="stat-label">Hoa Hồng Bán Được</span>
                 </div>
+                <button type="button" class="toggle-visibility" id="toggleRevenue" title="Ẩn/Hiện số tiền">
+                    <i class="fas fa-eye"></i>
+                </button>
             </div>
             <div class="stat-card">
                 <div class="stat-icon today-revenue">
@@ -77,6 +83,9 @@
                     <span class="stat-number" id="todayRevenue">0</span>
                     <span class="stat-label">Hoa Hồng Hôm Nay</span>
                 </div>
+                <button type="button" class="toggle-visibility" id="toggleTodayRevenue" title="Ẩn/Hiện số tiền">
+                    <i class="fas fa-eye"></i>
+                </button>
             </div>
         </div>
 
@@ -106,8 +115,10 @@
         <div class="toolbar">
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+                <input type="text" id="searchInput" name="search-product" placeholder="Tìm kiếm sản phẩm..." autocomplete="off" form="dummy-form">
+                <button type="button" class="search-clear hidden" id="searchClear" title="Xóa tìm kiếm"></button>
             </div>
+            <form id="dummy-form" style="display:none;"></form>
             <div class="date-filter">
                 <i class="fas fa-calendar"></i>
                 <input type="date" id="dateFilter">
@@ -133,6 +144,7 @@
             <table class="product-table">
                 <thead>
                     <tr>
+                        <th class="col-sell">Bán</th>
                         <th class="col-stt">STT</th>
                         <th class="col-name">Tên Sản Phẩm</th>
                         <th class="col-price">Đơn Giá</th>
@@ -155,26 +167,36 @@
 
     <!-- Login Modal -->
     <div class="modal" id="loginModal">
-        <div class="modal-content modal-narrow">
-            <div class="modal-header">
-                <h2>Đăng nhập quản trị</h2>
-                <button type="button" class="close-btn" id="closeLoginModal">
+        <div class="modal-content modal-narrow login-modal">
+            <div class="modal-header login-modal-header">
+                <h2><i class="fas fa-shield-halved"></i> Đăng nhập quản trị</h2>
+                <button type="button" class="close-btn" id="closeLoginModal" aria-label="Đóng">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <form id="loginForm">
-                <div class="form-group">
+                <div class="form-group login-field">
                     <label for="loginEmail">Email</label>
                     <input type="email" id="loginEmail" autocomplete="email" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group login-field">
                     <label for="loginPassword">Mật khẩu</label>
-                    <input type="password" id="loginPassword" autocomplete="current-password" required>
+                    <div class="login-password-wrap">
+                        <input type="password" id="loginPassword" autocomplete="current-password" required>
+                        <button type="button" class="login-toggle-password" id="toggleLoginPassword" title="Hiện / ẩn mật khẩu" aria-label="Hiện mật khẩu">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
-                <p class="form-hint">Chỉ tài khoản đã thêm trong Firebase Authentication mới đăng nhập được.</p>
-                <div class="form-actions">
+                <div class="login-hint">
+                    <i class="fas fa-circle-info" aria-hidden="true"></i>
+                    <p>Chỉ tài khoản đã thêm trong Firebase Authentication mới đăng nhập được.</p>
+                </div>
+                <div class="form-actions login-form-actions">
                     <button type="button" class="btn btn-secondary" id="cancelLoginBtn">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                    <button type="submit" class="btn btn-login-submit">
+                        <i class="fas fa-right-to-bracket"></i> Đăng nhập
+                    </button>
                 </div>
             </form>
         </div>
@@ -202,7 +224,7 @@
                     </div>
                     <div class="form-group">
                         <label for="productQuantity">Số Lượng</label>
-                        <input type="number" id="productQuantity" required min="0">
+                        <input type="number" id="productQuantity" min="0" placeholder="Không bắt buộc">
                     </div>
                 </div>
                 <div class="form-group">
@@ -219,6 +241,51 @@
                     <button type="submit" class="btn btn-primary">Lưu</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content modal-narrow password-modal">
+            <div class="modal-header password-modal-header">
+                <h2><i class="fas fa-key"></i> Nhập mật khẩu</h2>
+                <button type="button" class="close-btn" id="closePasswordModal" aria-label="Đóng">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Nhập mật khẩu để hiện số tiền</p>
+                <input type="password" id="passwordInput" placeholder="Nhập mật khẩu" autocomplete="off">
+                <p class="password-error hidden" id="passwordError">Mật khẩu không đúng!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelPasswordBtn">Hủy</button>
+                <button type="button" class="btn btn-primary" id="submitPasswordBtn">
+                    <i class="fas fa-check"></i> Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content modal-narrow delete-modal">
+            <div class="modal-header delete-modal-header">
+                <h2><i class="fas fa-trash-alt"></i> Xác nhận xóa</h2>
+                <button type="button" class="close-btn" id="closeDeleteModal" aria-label="Đóng">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn xóa sản phẩm <strong id="deleteProductName"></strong>?</p>
+                <p class="delete-warning">Hành động này không thể hoàn tác.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash-alt"></i> Xóa
+                </button>
+            </div>
         </div>
     </div>
 
@@ -258,6 +325,35 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Daily Sales Detail Modal -->
+    <div class="modal" id="dailySalesModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header">
+                <h2 id="dailySalesTitle"><i class="fas fa-calendar-day"></i> Chi tiết doanh thu</h2>
+                <button type="button" class="close-btn" id="closeDailySalesModal" aria-label="Đóng">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="sales-detail-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                            <th>Thời gian</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="dailySalesTableBody">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
